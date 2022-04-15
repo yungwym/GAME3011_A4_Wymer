@@ -11,7 +11,8 @@ public class GameController : MonoBehaviour
     public GameObject difficultyCanvas;
     public GameObject startCanvas;
     public GameObject gameUiCanvas;
-    public GameObject gameOverCanvas;
+    public GameObject gameWinCanvas;
+    public GameObject gameLoseCanvas;
 
     private bool b_GameStarted;
 
@@ -47,7 +48,8 @@ public class GameController : MonoBehaviour
         difficultyCanvas.SetActive(true);
         startCanvas.SetActive(false);
         gameUiCanvas.SetActive(false);
-        gameOverCanvas.SetActive(false);
+        gameWinCanvas.SetActive(false);
+        gameLoseCanvas.SetActive(false);
     }
 
     public void ShowStartUi()
@@ -55,7 +57,8 @@ public class GameController : MonoBehaviour
         difficultyCanvas.SetActive(false);
         startCanvas.SetActive(true);
         gameUiCanvas.SetActive(false);
-        gameOverCanvas.SetActive(false);
+        gameWinCanvas.SetActive(false);
+        gameLoseCanvas.SetActive(false);
     }
 
     public void ShowGameUi()
@@ -63,15 +66,28 @@ public class GameController : MonoBehaviour
         difficultyCanvas.SetActive(false);
         startCanvas.SetActive(false);
         gameUiCanvas.SetActive(true);
-        gameOverCanvas.SetActive(false);
+        gameWinCanvas.SetActive(false);
+        gameLoseCanvas.SetActive(false);
     }
 
-    public void ShowGameOverUi()
+    public void ShowGameWinUi()
     {
         difficultyCanvas.SetActive(false);
         startCanvas.SetActive(false);
         gameUiCanvas.SetActive(false);
-        gameOverCanvas.SetActive(true);
+        gameWinCanvas.SetActive(true);
+        gameLoseCanvas.SetActive(false);
+        nodeManager.gameObject.SetActive(false);
+    }
+
+    public void ShowGameLoseUi()
+    {
+        difficultyCanvas.SetActive(false);
+        startCanvas.SetActive(false);
+        gameUiCanvas.SetActive(false);
+        gameWinCanvas.SetActive(false);
+        gameLoseCanvas.SetActive(true);
+        nodeManager.gameObject.SetActive(false);
     }
 
 

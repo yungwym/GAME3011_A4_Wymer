@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-enum NodeType
+public enum NodeType
 {
     NONE,
-    OPEN,
-    END,
+    OPEN, 
+    END,    
     IMPASS,
     HACKED,
     CLOSED
@@ -27,6 +27,12 @@ public class Node : MonoBehaviour
 
     public Color greenColour;
     public Color redColour;
+
+
+    public NodeType GetNodeType()
+    {
+        return nodeType;
+    }
 
     public void SetNodeAsOpen()
     {

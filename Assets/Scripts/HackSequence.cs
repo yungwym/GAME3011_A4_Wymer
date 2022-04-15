@@ -128,9 +128,9 @@ public class HackSequence : MonoBehaviour
         else
         {
             Debug.Log("Unsuccessful Pick");
-           // nodeManager.gameObject.SetActive(true);
-           // nodeManager.UnsuccessfulPinHack();
-           // gameObject.SetActive(false);
+            nodeManager.gameObject.SetActive(true);
+            nodeManager.UnsuccessfulPinHack();
+            gameObject.SetActive(false);
         }
     }
 

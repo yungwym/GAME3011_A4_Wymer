@@ -5,6 +5,9 @@ using UnityEngine;
 public class NodeManager : MonoBehaviour
 {
 
+    //Game Controller
+    public GameController gameController;
+
     //Grid Variables
     public Transform startPosition;
     public Node nodePrefab;
@@ -22,10 +25,15 @@ public class NodeManager : MonoBehaviour
 
     public GameObject hackController;
     private HackSequence hackSequence;
+
+    //Line
+    public List<Transform> hackedTiles;
+    public LineController lineController;
    
     private void Awake()
     {
         hackController.SetActive(false);
+        lineController.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -53,6 +61,7 @@ public class NodeManager : MonoBehaviour
         }
         SetInitialSelectorPosition();
         SetEndNodePosition();
+        SpawnImpassNodes();
     }
 
     public Node SpawnEmptyNode(int row, int col, float x, float y)
@@ -79,6 +88,25 @@ public class NodeManager : MonoBehaviour
 
         Node endNode = grid[randomRow, column];
         endNode.SetNodeAsEnd();
+    }
+
+    private void SpawnImpassNodes()
+    {
+        int minColumn = (int)selector.GetPositionInGrid().y;
+
+        int randomColumn = Random.Range(minColumn, GridColumnSize - 1);
+        int randomRow = Random.Range(0, GridRowSize - 1);
+
+        Node impassNode = grid[randomRow, randomColumn];
+
+        if (impassNode.GetNodeType() == NodeType.NONE)
+        {
+            impassNode.SetNodeAsImpass();
+        }
+        else
+        {
+            SpawnImpassNodes();
+        }
     }
 
 
@@ -130,7 +158,7 @@ public class NodeManager : MonoBehaviour
     {
         int row = (int)selector.GetPositionInGrid().x;
         int newCol = (int)selector.GetPositionInGrid().y + 1;
-        
+
         selector.transform.position = GetNodeAtRowAndColumn(row, newCol).transform.position;
         selector.SetPositionInGrid(new Vector2(row, newCol));
     }
@@ -143,10 +171,10 @@ public class NodeManager : MonoBehaviour
 
         gameObject.SetActive(false);
         selector.gameObject.SetActive(false);
+        lineController.gameObject.SetActive(false);
         hackController.SetActive(true);
 
         hackSequence = hackController.GetComponent<HackSequence>();
-
         hackSequence.SetupHackSequence();
         hackSequence.GenerateHackSet(1,7);
     }
@@ -154,21 +182,52 @@ public class NodeManager : MonoBehaviour
     public void SuccessfulPinHack()
     {
         selector.gameObject.SetActive(true);
+        lineController.gameObject.SetActive(true);
 
         Debug.Log("Success from Node Manager");
 
-        IncreaseSelectorColumn();
+        Vector2 successNode = selector.GetPositionInGrid();
+
+        if (grid[(int)successNode.x, (int)successNode.y].GetNodeType() == NodeType.END)
+        {
+            hackedTiles.Add(grid[(int)successNode.x, (int)successNode.y].transform);
+            lineController.SetUpLine(hackedTiles);
+            GameOverWin();
+        }
+        else
+        {
+            hackedTiles.Add(grid[(int)successNode.x, (int)successNode.y].transform);
+            lineController.SetUpLine(hackedTiles);
+            grid[(int)successNode.x, (int)successNode.y].SetNodeAsHacked();
+            IncreaseSelectorColumn();
+        }
     }
 
     public void UnsuccessfulPinHack()
     {
         Debug.Log("Failure from Node Manager");
-
         selector.gameObject.SetActive(true);
+        lineController.gameObject.SetActive(true);
 
+        Vector2 successNode = selector.GetPositionInGrid();
+        hackedTiles.Add(grid[(int)successNode.x, (int)successNode.y].transform);
+
+        SpawnImpassNodes();
     }
 
 
+    public void GameOverWin()
+    {
+        Debug.Log("Win");
+        lineController.gameObject.SetActive(false);
+        gameController.ShowGameWinUi();
+    }
 
+    public void GameOverLose()
+    {
+        Debug.Log("Lose");
+        lineController.gameObject.SetActive(false);
+        gameController.ShowGameLoseUi();
+    }
 
 }
