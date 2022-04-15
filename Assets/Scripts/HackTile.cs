@@ -25,7 +25,7 @@ public class HackTile : MonoBehaviour
 
         indexNumber = randomNumber;
         numberText.text = indexNumber.ToString();
-        yield return new WaitForSeconds(GetRandomWaitTime());
+        yield return new WaitForSeconds(GetRandomWaitTime());  
         StartCoroutine(GenerateRandomNumberRepeated());
     }
 
@@ -36,6 +36,7 @@ public class HackTile : MonoBehaviour
     }
 
 
+    
 
 
 }

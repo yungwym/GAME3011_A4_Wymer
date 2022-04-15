@@ -20,24 +20,42 @@ public class HackSequence : MonoBehaviour
     //Select Number 
     public HackTile[] selectTiles;
 
+    //Indicator Variables 
     public IndicatorController indicator;
     bool moveRight = true;
-    float moveSpeed = 1.0f;
+    float moveSpeed = 0.75f;
+
+    //Current Target Number Variables 
+    public GameObject currentTileIndicator;
+    private int currentTargetNumber;
+    private int targetIndex = 0;
+
+    public NodeManager nodeManager;
 
     private void Start()
     {
+       // nodeManager = FindObjectOfType<NodeManager>();
+
         endPosition.position = new Vector2(-startPosition.position.x, startPosition.position.y);
 
         foreach (HackTile tile in selectTiles)
         {
             tile.GenerateRandomNumber();
         }
+
+        SetupCurrentTargetInfo();
     }
 
     // Update is called once per frame
     void Update()
     {
         MoveIndicator();
+    }
+
+    public void SetupCurrentTargetInfo()
+    {
+        currentTargetNumber = selectTiles[targetIndex].indexNumber;
+        currentTileIndicator.transform.position = new Vector2(selectTiles[targetIndex].transform.position.x, currentTileIndicator.transform.position.y);
     }
 
     public void GenerateHackSet(int rows, int columns)
@@ -78,6 +96,31 @@ public class HackSequence : MonoBehaviour
     private void MoveIndicator()
     {
         indicator.transform.position = Vector3.Lerp(startPosition.position, endPosition.position, Mathf.PingPong(Time.time * moveSpeed, 1.0f));
+    }
+
+
+    public void CheckHackTile(HackTile hackTile)
+    {
+
+        Debug.Log(hackTile.indexNumber);
+
+        if (hackTile.indexNumber == currentTargetNumber)
+        {
+            Debug.Log("Successful Pick");
+            targetIndex += 1;
+
+            if (targetIndex >= selectTiles.Length)
+            {
+                Debug.Log("Hack Sequence Success");
+                nodeManager.gameObject.SetActive(true);
+                nodeManager.SuccessfulPinHack();
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                SetupCurrentTargetInfo();
+            }
+        }
     }
        
 }

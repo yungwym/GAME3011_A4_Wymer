@@ -138,9 +138,9 @@ public class NodeManager : MonoBehaviour
         hackController.GetComponent<HackSequence>().GenerateHackSet(1, 7);
     }
 
-    private void SuccessfulPinHack()
+    public void SuccessfulPinHack()
     {
-
+        Debug.Log("Success from Node Manager");
     }
 
     private void UnsuccessfulPinHack()

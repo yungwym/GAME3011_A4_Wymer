@@ -4,15 +4,36 @@ using UnityEngine;
 
 public class IndicatorController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public HackTile currentOverlappingTile;
+
+    private HackSequence hackSequence;
+
+    private void Start()
     {
-        
+        hackSequence = FindObjectOfType<HackSequence>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.Space) && currentOverlappingTile != null)
+        {
+            hackSequence.CheckHackTile(currentOverlappingTile);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        //Debug.Log("Collision with HackTile");
+
+        if (collision.gameObject.CompareTag("HackTile"))
+        {
+            currentOverlappingTile = collision.gameObject.GetComponent<HackTile>();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        currentOverlappingTile = null;
     }
 }
