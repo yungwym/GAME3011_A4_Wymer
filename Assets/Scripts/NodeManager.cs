@@ -126,6 +126,15 @@ public class NodeManager : MonoBehaviour
         }
     }
 
+    private void IncreaseSelectorColumn()
+    {
+        int row = (int)selector.GetPositionInGrid().x;
+        int newCol = (int)selector.GetPositionInGrid().y + 1;
+        
+        selector.transform.position = GetNodeAtRowAndColumn(row, newCol).transform.position;
+        selector.SetPositionInGrid(new Vector2(row, newCol));
+    }
+
     private void SelectNode()
     {
         Vector2 selectedPos = selector.GetPositionInGrid();
@@ -135,18 +144,31 @@ public class NodeManager : MonoBehaviour
         gameObject.SetActive(false);
         selector.gameObject.SetActive(false);
         hackController.SetActive(true);
-        hackController.GetComponent<HackSequence>().GenerateHackSet(1, 7);
+
+        hackSequence = hackController.GetComponent<HackSequence>();
+
+        hackSequence.SetupHackSequence();
+        hackSequence.GenerateHackSet(1,7);
     }
 
     public void SuccessfulPinHack()
     {
+        selector.gameObject.SetActive(true);
+
         Debug.Log("Success from Node Manager");
+
+        IncreaseSelectorColumn();
     }
 
-    private void UnsuccessfulPinHack()
+    public void UnsuccessfulPinHack()
     {
+        Debug.Log("Failure from Node Manager");
+
+        selector.gameObject.SetActive(true);
 
     }
+
+
 
 
 }

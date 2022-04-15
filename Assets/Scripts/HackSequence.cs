@@ -32,9 +32,17 @@ public class HackSequence : MonoBehaviour
 
     public NodeManager nodeManager;
 
-    private void Start()
+    
+
+    // Update is called once per frame
+    void Update()
     {
-       // nodeManager = FindObjectOfType<NodeManager>();
+        MoveIndicator();
+    }
+
+    public void SetupHackSequence()
+    {
+        targetIndex = 0;
 
         endPosition.position = new Vector2(-startPosition.position.x, startPosition.position.y);
 
@@ -44,12 +52,6 @@ public class HackSequence : MonoBehaviour
         }
 
         SetupCurrentTargetInfo();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        MoveIndicator();
     }
 
     public void SetupCurrentTargetInfo()
@@ -111,6 +113,8 @@ public class HackSequence : MonoBehaviour
 
             if (targetIndex >= selectTiles.Length)
             {
+                Clear();
+
                 Debug.Log("Hack Sequence Success");
                 nodeManager.gameObject.SetActive(true);
                 nodeManager.SuccessfulPinHack();
@@ -120,6 +124,21 @@ public class HackSequence : MonoBehaviour
             {
                 SetupCurrentTargetInfo();
             }
+        }
+        else
+        {
+            Debug.Log("Unsuccessful Pick");
+           // nodeManager.gameObject.SetActive(true);
+           // nodeManager.UnsuccessfulPinHack();
+           // gameObject.SetActive(false);
+        }
+    }
+
+    private void Clear()
+    {
+        foreach (HackTile tile in grid)
+        {
+            Destroy(tile.gameObject);
         }
     }
        
