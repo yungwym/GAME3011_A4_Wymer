@@ -31,7 +31,7 @@ public class HackSequence : MonoBehaviour
     private int targetIndex = 0;
 
     public NodeManager nodeManager;
-
+    public AudioManager audioManager;
     
 
     // Update is called once per frame
@@ -108,6 +108,8 @@ public class HackSequence : MonoBehaviour
 
         if (hackTile.indexNumber == currentTargetNumber)
         {
+            audioManager.Play("Confirm");
+
             Debug.Log("Successful Pick");
             targetIndex += 1;
 

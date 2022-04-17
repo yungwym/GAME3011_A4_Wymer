@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class NodeManager : MonoBehaviour
 {
 
     //Game Controller
     public GameController gameController;
+
+    public AudioManager audioManager;
+
+    public TextMeshProUGUI nodesHackedText;
 
     //Grid Variables
     public Transform startPosition;
@@ -29,6 +34,8 @@ public class NodeManager : MonoBehaviour
     //Line
     public List<Transform> hackedTiles;
     public LineController lineController;
+
+    private bool b_GameStarted = false;
    
     private void Awake()
     {
@@ -39,7 +46,12 @@ public class NodeManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleInput();
+        if (b_GameStarted)
+        {
+            HandleInput();
+            UpdateUI();
+        }
+      
     }
 
     public void GenerateGrid(int rows, int columns)
@@ -62,6 +74,8 @@ public class NodeManager : MonoBehaviour
         SetInitialSelectorPosition();
         SetEndNodePosition();
         SpawnImpassNodes();
+
+        b_GameStarted = true;
     }
 
     public Node SpawnEmptyNode(int row, int col, float x, float y)
@@ -107,6 +121,12 @@ public class NodeManager : MonoBehaviour
         {
             SpawnImpassNodes();
         }
+    }
+
+    private void SpawnImpassNodeAtSpecificLocation(int row, int col)
+    {
+        Node impassNode = grid[row, col];
+        impassNode.SetNodeAsImpass();
     }
 
 
@@ -169,14 +189,25 @@ public class NodeManager : MonoBehaviour
 
         Debug.Log("Selected Node at Row: " + selectedPos.x + " Column: " + selectedPos.y);
 
-        gameObject.SetActive(false);
-        selector.gameObject.SetActive(false);
-        lineController.gameObject.SetActive(false);
-        hackController.SetActive(true);
+        Node nodeToTest = grid[(int)selectedPos.x, (int)selectedPos.y];
 
-        hackSequence = hackController.GetComponent<HackSequence>();
-        hackSequence.SetupHackSequence();
-        hackSequence.GenerateHackSet(1,7);
+        if (nodeToTest.GetNodeType() != NodeType.IMPASS)
+        {
+            gameObject.SetActive(false);
+            selector.gameObject.SetActive(false);
+            lineController.gameObject.SetActive(false);
+            hackController.SetActive(true);
+
+            hackSequence = hackController.GetComponent<HackSequence>();
+            hackSequence.SetupHackSequence();
+            hackSequence.GenerateHackSet(1, 7);
+        }
+        else 
+        {
+            Debug.Log("Invalid Selection");
+            audioManager.Play("Error");
+        }
+       
     }
 
     public void SuccessfulPinHack()
@@ -210,10 +241,23 @@ public class NodeManager : MonoBehaviour
         lineController.gameObject.SetActive(true);
         lineController.SetUpLine(hackedTiles);
 
-        Vector2 successNode = selector.GetPositionInGrid();
-        //hackedTiles.Add(grid[(int)successNode.x, (int)successNode.y].transform);
+        audioManager.Play("Error");
 
-        SpawnImpassNodes();
+        //Check surrounding nodes for an end condition 
+        Vector2 nodeXY = selector.GetPositionInGrid();
+        
+        if (CheckSurroundingNodes(nodeXY))
+        {
+            //Game Over
+            Debug.Log("Game Over");
+            SpawnImpassNodeAtSpecificLocation((int)nodeXY.x, (int)nodeXY.y);
+            audioManager.Play("Error");
+            StartCoroutine(GameOverLose());
+        }
+        else
+        {
+            SpawnImpassNodes();
+        }
     }
 
 
@@ -224,11 +268,79 @@ public class NodeManager : MonoBehaviour
         gameController.ShowGameWinUi();
     }
 
-    public void GameOverLose()
+    IEnumerator GameOverLose()
     {
         Debug.Log("Lose");
+        yield return new WaitForSeconds(0.75f);
         lineController.gameObject.SetActive(false);
         gameController.ShowGameLoseUi();
+    }
+
+    public void SetGridSpawnPoint(Vector2 spawnPoint)
+    {
+        startPosition.position = spawnPoint;
+    }
+
+
+    public bool CheckSurroundingNodes(Vector2 currentNodeCoord)
+    {
+        int row = (int)currentNodeCoord.x;
+        int col = (int)currentNodeCoord.y;
+
+        //Check Top
+        if (CheckIfGridIndexIsValid(row, col - 1))
+        {
+            if (grid[row, col - 1].GetNodeType() == NodeType.IMPASS)
+            {
+                return true;
+            }
+        }
+
+        //Check Bottom
+        if (CheckIfGridIndexIsValid(row, col + 1))
+        {
+            if (grid[row, col + 1].GetNodeType() == NodeType.IMPASS)
+            {
+                return true;
+            }
+        }
+        //Right
+        if (CheckIfGridIndexIsValid(row + 1, col))
+        {
+            if (grid[row + 1, col].GetNodeType() == NodeType.IMPASS)
+            {
+                return true;
+            }
+        }
+        //Left
+        if (CheckIfGridIndexIsValid(row - 1, col))
+        {
+            if (grid[row - 1, col].GetNodeType() == NodeType.IMPASS)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private Node CheckIfGridIndexIsValid(int row, int col)
+    {
+        //Check if Row and Column are valid 
+        if (row >= 0 && row < GridRowSize)
+        {
+            if (col >= 0 && col < GridColumnSize)
+            {
+                return grid[row, col];
+            }
+        }
+        return null;
+    }
+
+    public void UpdateUI()
+    {
+        nodesHackedText.text = "Nodes Hacked: " + selector.GetPositionInGrid().y + " / " + GridColumnSize;
     }
 
 }

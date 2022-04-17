@@ -5,24 +5,37 @@ using UnityEngine.SceneManagement;
 
 public class SceneNavigation : MonoBehaviour
 {
-   
+
+    public AudioManager audioManager;
+
+    
+
     public void QuitGame()
     {
+        audioManager.Play("Select");
         Application.Quit();
     }
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene("StartScene");
+
+        StartCoroutine(LoadSceneWithSound("StartScene"));
     }
 
     public void LoadGameScene()
     {
-        SceneManager.LoadScene("GameScene");
+        StartCoroutine(LoadSceneWithSound("GameScene"));
     }
 
-    public void LoadInstructionMenu()
+    public void LoadInstructionScene()
     {
-        SceneManager.LoadScene("InstructionScene");
+        StartCoroutine(LoadSceneWithSound("InstructionScene"));
+    }
+
+    public IEnumerator LoadSceneWithSound(string scene)
+    {
+        audioManager.Play("Select");
+        yield return new WaitForSeconds(0.1f);
+        SceneManager.LoadScene(scene);
     }
 }

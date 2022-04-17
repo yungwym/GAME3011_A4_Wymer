@@ -98,6 +98,7 @@ public class GameController : MonoBehaviour
         ShowStartUi();
         difficultyRow = 3;
         difficultyColumn = 5;
+        nodeManager.SetGridSpawnPoint(new Vector2(-3.0f, 1.5f));
     }
 
     public void OnMediumClicked()
@@ -105,6 +106,7 @@ public class GameController : MonoBehaviour
         ShowStartUi();
         difficultyRow = 4;
         difficultyColumn = 6;
+        nodeManager.SetGridSpawnPoint(new Vector2(-3.75f, 1.5f));
     }
 
     public void OnHardClicked()
@@ -112,6 +114,7 @@ public class GameController : MonoBehaviour
         ShowStartUi();
         difficultyRow = 5;
         difficultyColumn = 8;
+        nodeManager.SetGridSpawnPoint(new Vector2(-5.25f, 2.0f));
     }
 
 }
