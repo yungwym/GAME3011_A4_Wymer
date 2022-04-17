@@ -80,7 +80,8 @@ public class HackSequence : MonoBehaviour
 
         foreach (HackTile tile in grid)
         {
-            StartCoroutine(tile.GenerateRandomNumberRepeated());
+            //StartCoroutine(tile.GenerateRandomNumberRepeated());
+            tile.GenerateRandomNumRepeating();
         }
 
         //float xPos = grid[rows, columns].transform.position.x + hackPrefab.transform.localScale.x / 2;
@@ -103,7 +104,6 @@ public class HackSequence : MonoBehaviour
 
     public void CheckHackTile(HackTile hackTile)
     {
-
         Debug.Log(hackTile.indexNumber);
 
         if (hackTile.indexNumber == currentTargetNumber)
@@ -127,6 +127,8 @@ public class HackSequence : MonoBehaviour
         }
         else
         {
+            Clear();
+
             Debug.Log("Unsuccessful Pick");
             nodeManager.gameObject.SetActive(true);
             nodeManager.UnsuccessfulPinHack();

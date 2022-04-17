@@ -208,9 +208,10 @@ public class NodeManager : MonoBehaviour
         Debug.Log("Failure from Node Manager");
         selector.gameObject.SetActive(true);
         lineController.gameObject.SetActive(true);
+        lineController.SetUpLine(hackedTiles);
 
         Vector2 successNode = selector.GetPositionInGrid();
-        hackedTiles.Add(grid[(int)successNode.x, (int)successNode.y].transform);
+        //hackedTiles.Add(grid[(int)successNode.x, (int)successNode.y].transform);
 
         SpawnImpassNodes();
     }

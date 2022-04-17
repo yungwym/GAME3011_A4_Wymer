@@ -150,6 +150,9 @@ MonoBehaviour:
   indexNumber: 0
   numberText: {fileID: 8203206961751487257}
   randomWaitTime: 0
+  greenColour: {r: 0, g: 0.6784314, b: 0.06666667, a: 1}
+  redColour: {r: 0.7058824, g: 0, b: 0, a: 1}
+  spriteRenderer: {fileID: 8203206960744520795}
 --- !u!1 &8203206961751487256
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,8 +262,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
